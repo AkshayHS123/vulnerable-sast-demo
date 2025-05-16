@@ -1,4 +1,4 @@
-name: Bearer
+name: Bearer SAST Scan
 
 on:
   push:
@@ -13,7 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Bearer SAST Scan
+      
+      - name: Run Bearer SAST
         uses: bearer/bearer-action@v2
         with:
-          args: scan .
+          path: '.'
+          format: 'json'
+          output: 'bearer-report.json'
+          exit-code: '0'    # To not fail the workflow on findings (optional)

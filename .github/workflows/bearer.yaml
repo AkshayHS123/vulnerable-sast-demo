@@ -11,19 +11,15 @@ permissions:
 jobs:
   rule_check:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Run Bearer SAST
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Bearer SAST Scan
         uses: bearer/bearer-action@v2
         with:
-          path: '.'
-          format: 'json'
-          output: 'bearer-report.json'
-          exit-code: '0'    # Don't fail workflow even if issues found
-
-      - name: Upload Bearer SAST report
-        uses: actions/upload-artifact@v3
-        with:
-          name: bearer-sast-report
-          path: bearer-report.json
+          path: '.'               # scan the entire repository
+          format: 'tty'           # human-readable output in the Actions logs
+          exit-code: '0'          # do not fail workflow if vulnerabilities found
+          quiet: 'false'          # show progress and logs

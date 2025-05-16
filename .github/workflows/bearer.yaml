@@ -19,7 +19,15 @@ jobs:
       - name: Run Bearer SAST Scan
         uses: bearer/bearer-action@v2
         with:
-          path: '.'               # scan the entire repository
-          format: 'tty'           # human-readable output in the Actions logs
-          exit-code: '0'          # do not fail workflow if vulnerabilities found
-          quiet: 'false'          # show progress and logs
+          path: '.'
+          format: 'json'            # Supported report format
+          output: 'bearer-report.json'
+          exit-code: '0'            # Do not fail workflow on findings
+          quiet: 'false'            # Show logs in GitHub Actions
+          hide-progress-bar: true
+
+      - name: Upload Bearer report artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: bearer-report
+          path: bearer-report.json

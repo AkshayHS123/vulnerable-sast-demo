@@ -1,0 +1,49 @@
+name: Python App SAST & Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This is a build step"
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - run: echo "This is a test step"
+
+  container_scanning:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Trivy vulnerability scanner on filesystem (SAST mode)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+
+  integration:
+    runs-on: ubuntu-latest
+    needs: container_scanning
+    steps:
+      - run: echo "This is an integration step"
+      - run: exit 1
+        continue-on-error: true
+
+  prod:
+    runs-on: ubuntu-latest
+    needs: integration
+    steps:
+      - run: echo "This is a deploy step"

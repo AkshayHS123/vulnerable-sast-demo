@@ -27,7 +27,7 @@ jobs:
           hide-progress-bar: true
 
       - name: Upload Bearer report artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bearer-report
           path: bearer-report.json

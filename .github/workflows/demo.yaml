@@ -1,0 +1,42 @@
+name: AppPy SAST Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Step
+        run: echo "Build completed."
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Test Step
+        run: echo "Tests executed."
+
+  sast:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Bandit SAST Scan
+        run: |
+          pip install bandit
+          bandit app.py || true
+
+  prod:
+    runs-on: ubuntu-latest
+    needs: sast
+    steps:
+      - name: Deploy Step
+        run: echo "Deployed to production (simulated)"

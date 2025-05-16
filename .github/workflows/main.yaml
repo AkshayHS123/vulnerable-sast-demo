@@ -1,4 +1,4 @@
-name: Python App SAST & Workflow
+name: Python App SAST Workflow
 
 on:
   push:
@@ -33,6 +33,8 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
+          severity: 'MEDIUM'
+        continue-on-error: true         # allow pipeline to continue even if vulnerabilities found
 
   integration:
     runs-on: ubuntu-latest

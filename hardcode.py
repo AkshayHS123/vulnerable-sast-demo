@@ -1,7 +1,7 @@
 import subprocess
 
 # Hardcoded secret API key (vulnerable info leak)
-API_KEY = "12345-ABCDE-SECRET-API-KEY"
+API_KEY = "56ff1cb00726480e94626366345edc1e39441403e76e450785734c614a65737a"
 
 def insecure_command():
     # Insecure: taking shell command input from user and running it

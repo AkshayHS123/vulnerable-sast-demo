@@ -13,5 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Bearer
+      - name: Bearer SAST Scan
         uses: bearer/bearer-action@v2
+        with:
+          args: scan .

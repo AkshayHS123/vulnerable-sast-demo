@@ -20,4 +20,10 @@ jobs:
           path: '.'
           format: 'json'
           output: 'bearer-report.json'
-          exit-code: '0'    # To not fail the workflow on findings (optional)
+          exit-code: '0'    # Don't fail workflow even if issues found
+
+      - name: Upload Bearer SAST report
+        uses: actions/upload-artifact@v3
+        with:
+          name: bearer-sast-report
+          path: bearer-report.json

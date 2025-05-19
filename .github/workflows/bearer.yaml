@@ -1,4 +1,4 @@
-name: Bearer
+name: Bearer SAST Scan
 
 on:
   push:
@@ -11,11 +11,23 @@ permissions:
 jobs:
   rule_check:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Bearer
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Bearer SAST Scan
         uses: bearer/bearer-action@v2
         with:
-          config-file: "/some/path/bearer.yml"
-          only-rule: "ruby_lang_cookies,ruby_lang_http_post_insecure_with_data"
-          skip-path: "users/*.go,users/admin.sql"
+          path: '.'
+          format: 'json'            # Supported report format
+          output: 'bearer-report.json'
+          exit-code: '0'            # Do not fail workflow on findings
+          quiet: 'false'            # Show logs in GitHub Actions
+          hide-progress-bar: true
+
+      - name: Upload Bearer report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bearer-report
+          path: bearer-report.json

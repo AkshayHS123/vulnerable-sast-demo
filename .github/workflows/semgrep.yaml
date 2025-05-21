@@ -1,37 +1,48 @@
-# Name of this GitHub Actions workflow.
-name: Semgrep
+name: Semgrep Scan
 
 on:
-  # Scan changed files in PRs (diff-aware scanning):
-  pull_request: {}
-  # Scan on-demand through GitHub Actions interface:
-  workflow_dispatch: {}
-  # Scan mainline branches if there are changes to .github/workflows/semgrep.yml:
   push:
     branches:
       - main
       - master
-    paths:
-      - .github/workflows/semgrep.yml
-  # Schedule the CI job (this method uses cron syntax):
+  pull_request: {}
+  workflow_dispatch: {}
   schedule:
-    - cron: '20 17 * * *' # Sets Semgrep to scan every day at 17:20 UTC.
-    # It is recommended to change the schedule to a random time.
+    - cron: '20 17 * * *'  # Adjust to your preferred scan time
 
 permissions:
   contents: read
 
 jobs:
   semgrep:
-    # User definable name of this GitHub Actions job.
     name: semgrep/ci
     runs-on: ubuntu-latest
 
     container:
       image: semgrep/semgrep
 
-    if: (github.actor != 'dependabot[bot]')
+    if: github.actor != 'dependabot[bot]'
 
     steps:
       - uses: actions/checkout@v4
-      - run: semgrep scan --config p/default
+
+      - name: Run Semgrep and save JSON results
+        run: semgrep scan --config p/default --json > semgrep_results.json
+
+      - name: Convert JSON to simple HTML
+        run: |
+          echo '<html><body><pre>' > semgrep_results.html
+          cat semgrep_results.json | jq '.' >> semgrep_results.html
+          echo '</pre></body></html>' >> semgrep_results.html
+
+      - name: Upload JSON results
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-results-json
+          path: semgrep_results.json
+
+      - name: Upload HTML results
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-results-html
+          path: semgrep_results.html
